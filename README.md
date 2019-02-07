@@ -1,8 +1,8 @@
 # Using Immutable.js with Redux
 
-Simple example using [Immutable.js] with [Redux] vs using plain JavaScript data structures.
+> This repo is designed for teaching purposes.
 
-Note that this repo is designed for teaching purposes.
+Simple example using [Immutable.js] with [Redux].
 
 [Immutable.js]:https://facebook.github.io/immutable-js/
 [Redux]:https://redux.js.org/

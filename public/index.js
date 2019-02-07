@@ -1,6 +1,5 @@
 // -----------------------------------------------------------------------------
 // Util
-// -----------------------------------------------------------------------------
 
 const byId = (id) => document.getElementById(id)
 
@@ -10,40 +9,39 @@ const deepCopy = (x) => JSON.parse(JSON.stringify(x))
 
 // -----------------------------------------------------------------------------
 // Render
-// -----------------------------------------------------------------------------
 
 const counterEl = byId('counterValue')
 
 const render = () => {
   const currentState = getState()
-  counterEl.innerHTML = currentState.counter
-  counterEl.style.color = currentState.color
+  counterEl.innerHTML = Immutable.get(currentState, 'counter')
+  counterEl.style.color = Immutable.get(currentState, 'color')
 }
 
 // -----------------------------------------------------------------------------
 // Initial Value + Reducer
-// -----------------------------------------------------------------------------
 
-const initialValue = {
-  color: 'red',
+const initialValue = Immutable.fromJS({
+  color: 'blue',
   counter: 0
-}
+})
 
 const reducer = (currentState = initialValue, action) => {
-  let newState = deepCopy(currentState)
+  console.assert(Immutable.isImmutable(currentState), 'Redux store should be an Immutable value.')
+
+  let nextState = currentState
 
   if (action.type === 'ADD') {
-    newState.counter = currentState.counter + action.value
+    nextState = Immutable.updateIn(currentState, ['counter'], (c) => c + action.value)
   } else if (action.type === 'UPDATE_COLOR') {
-    newState.color = action.color
+    nextState = Immutable.set(currentState, 'color', action.color)
   }
 
-  return newState
+  return nextState
 }
 
 // -----------------------------------------------------------------------------
 // Create Redux Store
-// -----------------------------------------------------------------------------
 
 const { createStore } = Redux;
 
@@ -58,7 +56,6 @@ dispatch({type: 'INIT'})
 
 // -----------------------------------------------------------------------------
 // DOM Events
-// -----------------------------------------------------------------------------
 
 const addEvents = () => {
   const incrementButton = byId('increment');
@@ -74,6 +71,7 @@ const addEvents = () => {
   minusFiveBtn.addEventListener('click', () => dispatch({type: 'ADD', value: -5}))
 
   const colorInputEl = byId('colorInput')
+  colorInputEl.addEventListener('change', (e) => dispatch({type: 'UPDATE_COLOR', color: e.target.value}))
 }
 
 addEvents()
